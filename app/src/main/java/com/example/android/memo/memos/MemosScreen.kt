@@ -130,6 +130,7 @@ private fun MemoItem(
     OutlinedCard(
         Modifier
             .fillMaxWidth()
+            .padding(top = 8.dp, bottom = 8.dp)
             .clickable{ onMemoClick(memo) },
         border = BorderStroke(1.dp, Color(red = 53, green = 74, blue = 123)),
     ) {

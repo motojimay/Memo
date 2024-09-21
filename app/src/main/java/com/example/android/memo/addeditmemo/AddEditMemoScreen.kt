@@ -2,6 +2,7 @@ package com.example.android.memo.addeditmemo
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -164,8 +165,7 @@ private fun AddEditMemoContent(
             onValueChange = onContentChanged,
             placeholder = { Text(stringResource(id = R.string.content_hint)) },
             modifier = Modifier
-                .height(350.dp)
-                .fillMaxWidth(),
+                .fillMaxSize(),
             colors = textFieldColors
         )
     }
