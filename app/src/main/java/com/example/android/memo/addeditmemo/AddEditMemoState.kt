@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import kotlinx.coroutines.CoroutineScope
@@ -73,7 +74,7 @@ class AddEditMemoState(
         viewModel.title.value = newTitle
     }
 
-    fun onContentChanged(newContent: String) {
+    fun onContentChanged(newContent: TextFieldValue) {
         viewModel.content.value = newContent
     }
 }

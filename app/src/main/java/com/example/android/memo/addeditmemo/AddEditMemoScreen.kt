@@ -2,15 +2,13 @@ package com.example.android.memo.addeditmemo
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.android.memo.R
 import com.example.android.memo.util.AddEditTaskTopAppBar
@@ -48,6 +46,7 @@ fun AddEditMemoScreen(
     state: AddEditMemoState = rememberAddEditTaskState(memoId, viewModel, onMemoUpdate)
 ) {
     var isChecked by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -61,28 +60,37 @@ fun AddEditMemoScreen(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = state::onFabClick) {
-                Icon(Icons.Filled.Done, stringResource(id = R.string.cd_save_Memo))
+            FloatingActionButton(onClick = { showDialog = true }) {
+                Icon(Icons.Filled.Menu, stringResource(id = R.string.cd_save_Memo))
             }
         }
     ) { paddingValues ->
         val title by viewModel.title.observeAsState(initial = "")
-        val content by viewModel.content.observeAsState(initial = "")
+        val content by viewModel.content.observeAsState(initial = TextFieldValue(""))
 
         if (isChecked) {
             PreviewContent(
                 title = title,
-                content = if (content.equals("")) "# Content" else content,
+                content = if (content.text.isEmpty()) TextFieldValue("# Content") else content,
                 onTitleChanged = state::onTitleChanged,
                 modifier = Modifier.padding(paddingValues)
             )
         } else {
             AddEditMemoContent(
                 title = title,
-                content = content,
+                content = if (content.text.isEmpty()) TextFieldValue("# Content") else content,
                 onTitleChanged = state::onTitleChanged,
                 onContentChanged = state::onContentChanged,
                 modifier = Modifier.padding(paddingValues)
+            )
+        }
+
+        if (showDialog) {
+            MarkdownEditorDialog(
+                onDismiss = { showDialog = false },
+                onOptionSelected = { option ->
+                    viewModel.onOptionSelected(option)
+                }
             )
         }
     }
@@ -91,7 +99,7 @@ fun AddEditMemoScreen(
 @Composable
 private fun PreviewContent(
     title: String,
-    content: String,
+    content: TextFieldValue,
     onTitleChanged: (String) -> Unit,
     modifier: Modifier
 ) {
@@ -121,7 +129,7 @@ private fun PreviewContent(
                 maxLines = 1,
                 colors = textFieldColors
             )
-            MarkdownText(markdown = content)
+            MarkdownText(markdown = content.text)
         }
     }
 }
@@ -129,9 +137,9 @@ private fun PreviewContent(
 @Composable
 private fun AddEditMemoContent(
     title: String,
-    content: String,
+    content: TextFieldValue,
     onTitleChanged: (String) -> Unit,
-    onContentChanged: (String) -> Unit,
+    onContentChanged: (TextFieldValue) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(

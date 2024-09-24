@@ -1,5 +1,7 @@
 package com.example.android.memo.addeditmemo
 
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,7 +17,7 @@ class AddEditMemoViewModel(
 ) : ViewModel() {
 
     val title = MutableLiveData<String>()
-    val content = MutableLiveData<String>()
+    val content = MutableLiveData<TextFieldValue>()
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
@@ -61,7 +63,7 @@ class AddEditMemoViewModel(
 
     private fun onTaskLoaded(memo: Memo) {
         title.value = memo.title
-        content.value = memo.content
+        content.value = TextFieldValue(memo.content)
         isFavorite = memo.isFavorite
         _dataLoading.value = false
         isDataLoaded = true
@@ -73,7 +75,7 @@ class AddEditMemoViewModel(
 
     fun saveMemo() {
         val currentTitle = title.value
-        val currentContent = content.value
+        val currentContent = content.value?.text
 
         if (currentTitle == null || currentContent == null) {
             _snackBarText.value = R.string.empty_memo_message
@@ -95,6 +97,33 @@ class AddEditMemoViewModel(
 
     fun snackBarMessageShown() {
         _snackBarText.value = null
+    }
+
+    fun onOptionSelected(option: String) {
+        val currentContent = content.value ?: TextFieldValue("")
+        val newText = when (option) {
+            "# " -> "# "
+            "## " -> "## "
+            "### " -> "### "
+            "#### " -> "#### "
+            "##### " -> "##### "
+            "###### " -> "###### "
+            "> " -> "> "
+            ">> " -> ">> "
+            "* *" -> "* *"
+            "** **" -> "** **"
+            "*** ***" -> "*** ***"
+            "```\n\n```" -> "```\n\n```"
+            else -> ""
+        }
+        val newContentText = currentContent.text + newText
+
+        // 新しいカーソル位置を設定
+        val newCursorPosition = newContentText.length
+        content.value = TextFieldValue(
+            text = newContentText,
+            selection = TextRange(newCursorPosition)
+        )
     }
 
     private fun createMemo(newMemo: Memo) = viewModelScope.launch {

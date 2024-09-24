@@ -52,8 +52,6 @@ fun MemosDetailScreen(
             }
         }
     ) { paddingValues ->
-        val loading by viewModel.dataLoading.observeAsState(initial = false)
-        val dataAvailable by viewModel.isDataAvailable.observeAsState(initial = true)
         val memo by viewModel.memo.observeAsState()
 
        PreviewContent(
