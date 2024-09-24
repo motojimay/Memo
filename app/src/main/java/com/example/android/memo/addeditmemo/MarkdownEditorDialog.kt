@@ -112,14 +112,14 @@ fun HeaderMenu(onDismiss: () -> Unit, onOptionSelected: (String) -> Unit) {
         }
         Button(
             onClick = {
-                onOptionSelected("###### ")
+                onOptionSelected("##### ")
                 onDismiss() },
             modifier = Modifier.fillMaxWidth()) {
             Text("h5")
         }
         Button(
             onClick = {
-                onOptionSelected("####### ")
+                onOptionSelected("###### ")
                 onDismiss() },
             modifier = Modifier.fillMaxWidth()) {
             Text("h6")
